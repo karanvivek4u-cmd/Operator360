@@ -67,7 +67,7 @@ export const notificationsQuery = (userId: string | null) =>
 export const adminMetricsQuery = queryOptions({
   queryKey: ["admin", "metrics"],
   queryFn: async () => {
-    const [customers, machines, operators, pending] = await Promise.all([
+    const [customers, machines, operators, pending, activeMachines, maintenanceMachines, unassignedMachines] = await Promise.all([
       supabase.from("customers").select("customer_id", { count: "exact", head: true }),
       supabase.from("machines").select("machine_id", { count: "exact", head: true }),
       supabase.from("operators").select("operator_id", { count: "exact", head: true }),
@@ -75,12 +75,18 @@ export const adminMetricsQuery = queryOptions({
         .from("service_requests")
         .select("request_id", { count: "exact", head: true })
         .eq("overall_status", "PENDING"),
+      supabase.from("machines").select("machine_id", { count: "exact", head: true }).eq("status", "ACTIVE"),
+      supabase.from("machines").select("machine_id", { count: "exact", head: true }).eq("status", "MAINTENANCE"),
+      supabase.from("machines").select("machine_id", { count: "exact", head: true }).eq("status", "UNASSIGNED"),
     ]);
     return {
       customers: customers.count ?? 0,
       machines: machines.count ?? 0,
       operators: operators.count ?? 0,
       pendingRequests: pending.count ?? 0,
+      activeMachines: activeMachines.count ?? 0,
+      maintenanceMachines: maintenanceMachines.count ?? 0,
+      unassignedMachines: unassignedMachines.count ?? 0,
     };
   },
 });

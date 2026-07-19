@@ -23,27 +23,6 @@ import craneHero from "@/assets/crane.png";
 import logoImage from "@/assets/logo.png";
 
 export const Route = createFileRoute("/")({
-  beforeLoad: async () => {
-    if (typeof window === "undefined") return;
-    const { data } = await supabase.auth.getSession();
-    if (data.session) {
-      const { data: u } = await supabase
-        .from("users")
-        .select("role")
-        .eq("auth_user_id", data.session.user.id)
-        .maybeSingle();
-      const role = u?.role ?? "CUSTOMER";
-      const home =
-        role === "ADMIN"
-          ? "/admin/dashboard"
-          : role === "INSURANCE"
-            ? "/insurance/dashboard"
-            : role === "OPERATOR"
-              ? "/operator/dashboard"
-              : "/customer/dashboard";
-      throw redirect({ to: home });
-    }
-  },
   component: Landing,
 });
 
@@ -109,7 +88,7 @@ function Landing() {
         </div>
       </div>
 
-      <section className="relative z-10 mx-auto max-w-7xl px-6 pb-10 pt-12 md:pt-16">
+      <section className="relative z-10 mx-auto max-w-7xl px-6 pb-32 pt-12 md:pt-16">
         <div className="grid gap-6 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.45fr)] lg:items-start">
           {/* LEFT: copy */}
           <div className="fade-in-up relative pt-2 lg:pt-10">
@@ -184,50 +163,7 @@ function Landing() {
           </div>
         </div>
 
-        {/* Bottom stats bar */}
-        <div className="mt-12 grid grid-cols-1 gap-0 overflow-hidden rounded-2xl border border-[#0a1628]/10 bg-white/90 shadow-[0_20px_60px_-30px_rgba(10,22,40,0.35)] backdrop-blur sm:grid-cols-2 lg:grid-cols-5">
-          {[
-            { icon: Truck, label: "Machines under management", value: "1,284" },
-            { icon: HardHat, label: "Active operators", value: "3,412" },
-            { icon: ShieldCheck, label: "Approved requests", value: "97%" },
-            { icon: Gauge, label: "Avg. turnaround time", value: "1.4d" },
-          ].map((k) => (
-            <div
-              key={k.label}
-              className="flex items-center gap-4 border-b border-r border-[#0a1628]/10 px-6 py-5 last:border-r-0"
-            >
-              <k.icon
-                className="size-9 shrink-0 text-[#1e5fd6]"
-                strokeWidth={1.4}
-              />
-              <div className="min-w-0">
-                <div className="text-2xl font-black tabular-nums text-[#0a1628]">
-                  {k.value}
-                </div>
-                <div className="text-[11px] uppercase tracking-wide text-[#4a5568]">
-                  {k.label}
-                </div>
-              </div>
-            </div>
-          ))}
-          <div className="relative flex flex-col justify-center gap-1 bg-white px-6 py-5">
-            <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#1e5fd6]">
-              <Sparkles className="size-3.5" /> AI Copilot Insight
-            </div>
-            <div className="text-sm font-semibold text-[#0a1628]">
-              Operator retention up 12% this quarter.
-            </div>
-            <p className="text-xs text-[#4a5568]">
-              3 machines require reassignment in the next 7 days.
-            </p>
-            <Link
-              to="/auth"
-              className="mt-1 inline-flex items-center gap-1 text-xs font-semibold text-[#1e5fd6] hover:underline"
-            >
-              View insights <ArrowRight className="size-3" />
-            </Link>
-          </div>
-        </div>
+
       </section>
 
       {/* --- PROBLEM SECTION --- */}

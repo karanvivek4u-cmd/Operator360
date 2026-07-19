@@ -1,0 +1,4 @@
+customer_id,serial_number,model_number,engine_number,purchase_date,warranty_end_date,status,remarks
+605e85de-d308-4cb7-8c04-ee9cc21f6f00,MACH-EX-001,CAT 320D,ENG-9988-1,2025-01-15,2028-01-15,ACTIVE,Heavy Duty Excavator
+1954a937-a951-43c6-9fc5-9b702b733e98,MACH-JCB-002,JCB 3DX,ENG-9988-2,2025-02-20,2028-02-20,MAINTENANCE,Requires quarterly oil change
+53978787-fd04-4973-99be-4625458562d0,MACH-VOL-003,Volvo EC210D,ENG-9988-3,2025-03-10,2028-03-10,UNASSIGNED,New arrival pending assignment

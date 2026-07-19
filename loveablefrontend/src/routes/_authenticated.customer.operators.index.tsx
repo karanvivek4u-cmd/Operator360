@@ -14,6 +14,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { CsvUploadModal } from "@/components/operator360/CsvUploadModal";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { format } from "date-fns";
+import { Calendar as CalendarIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { apiFetch } from "@/lib/operator360/api";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -158,13 +163,13 @@ function CustomerOperatorsPage() {
             if (!data.success) {
               throw new Error(data.error || "Failed to upload operators");
             }
-            const failed = data.results.filter(r => !r.success);
+            const failed = data.results.filter((r: any) => !r.success);
             if (failed.length > 0) {
               toast.error(`${failed.length} operators failed to import. Check console for details.`);
               console.error("Failed imports:", failed);
             }
             
-            const success = data.results.filter(r => r.success);
+            const success = data.results.filter((r: any) => r.success);
             if (success.length > 0) {
               toast.success(`${success.length} operators imported successfully`);
             }
@@ -207,17 +212,65 @@ function CustomerOperatorsPage() {
                 <Label>Aadhaar Number <span className="text-muted-foreground text-xs font-normal">(Optional)</span></Label>
                 <Input value={formData.aadhaar_number} onChange={e => setFormData({...formData, aadhaar_number: e.target.value})} placeholder="e.g. 1234 5678 9012" />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-2 flex flex-col">
                 <Label>Date of Birth <span className="text-muted-foreground text-xs font-normal">(Optional)</span></Label>
-                <Input type="date" value={formData.dob} onChange={e => setFormData({...formData, dob: e.target.value})} />
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant={"outline"}
+                      className={cn(
+                        "w-full justify-start text-left font-normal border-input bg-background hover:bg-accent hover:text-accent-foreground",
+                        !formData.dob && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {formData.dob ? format(new Date(formData.dob), "PPP") : <span>Pick a date</span>}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={formData.dob ? new Date(formData.dob) : undefined}
+                      onSelect={(date) => setFormData({...formData, dob: date ? format(date, "yyyy-MM-dd") : ""})}
+                      initialFocus
+                      captionLayout="dropdown"
+                      startMonth={new Date(1950, 0)}
+                      endMonth={new Date()}
+                    />
+                  </PopoverContent>
+                </Popover>
               </div>
               <div className="space-y-2">
                 <Label>Gender <span className="text-muted-foreground text-xs font-normal">(Optional)</span></Label>
                 <Input value={formData.gender} onChange={e => setFormData({...formData, gender: e.target.value})} placeholder="e.g. Male" />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-2 flex flex-col">
                 <Label>Joining Date <span className="text-muted-foreground text-xs font-normal">(Optional)</span></Label>
-                <Input type="date" value={formData.joining_date} onChange={e => setFormData({...formData, joining_date: e.target.value})} />
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant={"outline"}
+                      className={cn(
+                        "w-full justify-start text-left font-normal border-input bg-background hover:bg-accent hover:text-accent-foreground",
+                        !formData.joining_date && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {formData.joining_date ? format(new Date(formData.joining_date), "PPP") : <span>Pick a date</span>}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={formData.joining_date ? new Date(formData.joining_date) : undefined}
+                      onSelect={(date) => setFormData({...formData, joining_date: date ? format(date, "yyyy-MM-dd") : ""})}
+                      initialFocus
+                      captionLayout="dropdown"
+                      startMonth={new Date(1980, 0)}
+                      endMonth={new Date()}
+                    />
+                  </PopoverContent>
+                </Popover>
               </div>
               <div className="space-y-2 md:col-span-2">
                 <Label>Address <span className="text-muted-foreground text-xs font-normal">(Optional)</span></Label>

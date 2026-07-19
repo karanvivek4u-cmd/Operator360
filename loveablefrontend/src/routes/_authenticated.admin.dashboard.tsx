@@ -43,11 +43,11 @@ function AdminDashboard() {
   const recent = requests.slice(0, 6);
 
   const chartData = [
-    { label: "Assigned", value: Math.max(1, metrics.machines - metrics.pendingRequests) },
-    { label: "Pending", value: metrics.pendingRequests },
-    { label: "Idle", value: Math.max(0, metrics.machines - metrics.operators) },
+    { label: "Active", value: metrics.activeMachines || 0 },
+    { label: "Maintenance", value: metrics.maintenanceMachines || 0 },
+    { label: "Unassigned", value: metrics.unassignedMachines || 0 },
   ];
-  const colors = ["#38bdf8", "#94a3b8", "#94a3b8"];
+  const colors = ["#10b981", "#f59e0b", "#94a3b8"]; // Emerald (Active), Amber (Maintenance), Slate (Unassigned)
 
   return (
     <div>

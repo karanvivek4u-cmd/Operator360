@@ -2,15 +2,10 @@ const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 const OPENAI_MODEL = process.env.OPENAI_MODEL || "gpt-4o-mini";
 
 function extractText(response) {
-  if (typeof response.output_text === "string") return response.output_text;
-  const chunks = [];
-  for (const item of response.output || []) {
-    for (const content of item.content || []) {
-      if (content.type === "output_text" && content.text) chunks.push(content.text);
-      if (content.type === "text" && content.text) chunks.push(content.text);
-    }
+  if (response.choices && response.choices.length > 0 && response.choices[0].message) {
+    return response.choices[0].message.content;
   }
-  return chunks.join("\n").trim();
+  return "";
 }
 
 function buildInput(messages, context) {
@@ -73,7 +68,7 @@ class ChatController {
     if (!latest) return res.status(400).json({ error: "Message is required" });
 
     try {
-      const openAiResponse = await fetch("https://api.openai.com/v1/responses", {
+      const openAiResponse = await fetch("https://api.openai.com/v1/chat/completions", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${OPENAI_API_KEY}`,
@@ -81,8 +76,8 @@ class ChatController {
         },
         body: JSON.stringify({
           model: OPENAI_MODEL,
-          input: buildInput(msgArray, context),
-          max_output_tokens: 500,
+          messages: buildInput(msgArray, context),
+          max_tokens: 500,
         }),
       });
 
