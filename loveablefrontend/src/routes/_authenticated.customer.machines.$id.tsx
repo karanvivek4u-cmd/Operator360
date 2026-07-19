@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient, queryOptions } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { apiFetch } from "@/lib/operator360/api";
 import { PageHeader } from "@/components/operator360/PageHeader";
 import { StatusBadge } from "@/components/operator360/StatusBadge";
 import { Card } from "@/components/ui/card";
@@ -109,9 +110,40 @@ function MDetail() {
   const isMaxedOut = activeCount >= 3;
   const activeOperatorIds = activeAssignments.map((x) => x.operator_id);
 
+  const qc = useQueryClient();
+  const toggleStatusMut = useMutation({
+    mutationFn: async (newStatus: string) => {
+      await apiFetch(`/api/machines/${id}/status`, {
+        method: "PATCH",
+        body: JSON.stringify({ status: newStatus }),
+      });
+    },
+    onSuccess: () => {
+      toast.success("Machine status updated");
+      qc.invalidateQueries({ queryKey: ["cust", "machine", id] });
+    },
+    onError: (e: any) => toast.error(e.message),
+  });
+
   return (
     <div className="space-y-6">
-      <PageHeader title={m.serial_number} description={m.model_number ?? ""} actions={<StatusBadge status={m.status} />} />
+      <PageHeader 
+        title={m.serial_number} 
+        description={m.model_number ?? ""} 
+        actions={
+          <div className="flex items-center gap-3">
+            <StatusBadge status={m.status} />
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => toggleStatusMut.mutate(m.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE')}
+              disabled={toggleStatusMut.isPending}
+            >
+              Set to {m.status === 'ACTIVE' ? 'Inactive' : 'Active'}
+            </Button>
+          </div>
+        } 
+      />
       <Card className="p-5">
         <div className="mb-4 flex items-center justify-between">
           <h3 className="font-semibold">Operator history</h3>

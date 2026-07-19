@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { CsvUploadModal } from "@/components/operator360/CsvUploadModal";
+import { apiFetch } from "@/lib/operator360/api";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -68,21 +69,13 @@ function CustomerOperatorsPage() {
           emergency_contact: formData.emergency_contact || null,
         };
 
-        const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/operators`, {
+        const res = await apiFetch(`/api/operators`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload)
         });
 
-        if (!res.ok) {
-          const err = await res.json();
-          throw new Error(err.error || "Failed to save operator");
-        }
-        
-        const data = await res.json();
-        const result = data.results[0];
-        if (!result.success) {
-           throw new Error(result.error || "Failed to save operator");
+        if (!res.success) {
+           throw new Error(res.error || "Failed to save operator");
         }
       },
       onSuccess: () => {
@@ -157,18 +150,14 @@ function CustomerOperatorsPage() {
               status: row.status || "ACTIVE"
             }));
             
-            const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/operators`, {
+            const data = await apiFetch(`/api/operators/import`, {
               method: "POST",
-              headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ operators: mappedData })
             });
 
-            if (!res.ok) {
-              const err = await res.json();
-              throw new Error(err.error || "Failed to upload operators");
+            if (!data.success) {
+              throw new Error(data.error || "Failed to upload operators");
             }
-
-            const data = await res.json();
             const failed = data.results.filter(r => !r.success);
             if (failed.length > 0) {
               toast.error(`${failed.length} operators failed to import. Check console for details.`);

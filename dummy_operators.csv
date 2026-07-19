@@ -1,0 +1,4 @@
+operator_code,first_name,last_name,email,mobile,aadhaar_number,dob,gender,joining_date,address,emergency_contact,status
+OP-001,Raju,Sharma,vidyotma.ruby@gmail.com,9876543212,123456789012,1990-01-01,Male,2025-01-01,789 Road,9876543213,ACTIVE
+OP-002,Amit,Singh,sanjaykumarsinhaskv@gmail.com,9876543214,987654321012,1985-05-15,Male,2025-02-01,456 Street,9876543215,ACTIVE
+OP-003,Priya,Desai,piyushkarn69@gmail.com,9876543216,456123789012,1992-08-20,Female,2025-03-01,123 Avenue,9876543217,ACTIVE

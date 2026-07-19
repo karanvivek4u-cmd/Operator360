@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, queryOptions, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { apiFetch } from "@/lib/operator360/api";
 import { PageHeader } from "@/components/operator360/PageHeader";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -41,8 +42,15 @@ function RequestDetail() {
       overall_status?: "PENDING" | "APPROVED" | "REJECTED" | "COMPLETED";
       closed_at?: string;
     }) => {
-      const { error } = await supabase.from("service_requests").update(patch).eq("request_id", id);
-      if (error) throw error;
+      let endpoint = "";
+      if (patch.admin_status === "APPROVED") endpoint = `/api/service-requests/${id}/approve-admin`;
+      else if (patch.admin_status === "REJECTED") endpoint = `/api/service-requests/${id}/reject-admin`;
+      else if (patch.overall_status === "COMPLETED") endpoint = `/api/service-requests/${id}/complete`;
+      
+      if (!endpoint) throw new Error("Invalid patch operation");
+      
+      const res = await apiFetch(endpoint, { method: "POST" });
+      if (!res.success) throw new Error(res.error || "Update failed");
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["request", id] });

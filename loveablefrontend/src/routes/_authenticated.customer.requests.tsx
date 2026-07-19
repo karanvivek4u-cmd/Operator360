@@ -12,6 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { apiFetch } from "@/lib/operator360/api";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -80,18 +81,19 @@ function NewRequestDialog() {
   const mut = useMutation({
     mutationFn: async () => {
       if (!me) throw new Error("Not signed in");
-      const rn = `SR-${Date.now().toString(36).toUpperCase()}`;
-      const { error } = await supabase.from("service_requests").insert({
-        request_number: rn,
-        request_type: "OPERATOR_REPLACEMENT",
-        customer_id: me.customer_id!,
-        machine_id: machineId,
-        old_operator_id: oldOp || null,
-        new_operator_id: newOp || null,
-        requested_by: me.user_id,
-        customer_comments: comments,
+      const res = await apiFetch(`/api/service-requests`, {
+        method: "POST",
+        body: JSON.stringify({
+          customer_id: me.customer_id!,
+          machine_id: machineId,
+          old_operator_id: oldOp || null,
+          new_operator_id: newOp || null,
+          requested_by: me.user_id,
+          request_type: "OPERATOR_REPLACEMENT",
+          customer_comments: comments,
+        })
       });
-      if (error) throw error;
+      if (!res.success) throw new Error(res.error || "Failed to create request");
     },
     onSuccess: () => {
       toast.success("Request submitted");

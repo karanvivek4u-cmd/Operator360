@@ -34,6 +34,7 @@ import {
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { CsvUploadModal } from "@/components/operator360/CsvUploadModal";
+import { apiFetch } from "@/lib/operator360/api";
 
 type CustomerCategory = Database["public"]["Enums"]["customer_category"];
 type ActiveStatus = Database["public"]["Enums"]["active_status"];
@@ -68,24 +69,15 @@ function CustomersPage() {
     category: "BRONZE" as CustomerCategory,
     status: "ACTIVE" as ActiveStatus,
   });
-
   const mut = useMutation({
     mutationFn: async (payload: typeof formData) => {
-      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/customers`, {
+      const res = await apiFetch(`/api/customers`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ customers: [payload] })
+        body: JSON.stringify(payload)
       });
-
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || "Failed to save customer");
-      }
       
-      const data = await res.json();
-      const result = data.results[0];
-      if (!result.success) {
-         throw new Error(result.error || "Failed to save customer");
+      if (!res.success) {
+         throw new Error(res.error || "Failed to save customer");
       }
 
       // 4. Send notification to the Admin
@@ -393,18 +385,16 @@ function CustomersPage() {
               : "ACTIVE",
           }));
 
-          const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/customers`, {
+          const res = await apiFetch(`/api/customers/import`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ customers: mappedData })
           });
 
-          if (!res.ok) {
-            const err = await res.json();
-            throw new Error(err.error || "Failed to upload customers");
+          if (!res.success) {
+            throw new Error(res.error || "Failed to upload customers");
           }
 
-          const data = await res.json();
+          const data = res;
           const failed = data.results.filter((r: any) => !r.success);
           if (failed.length > 0) {
             toast.error(`${failed.length} customers failed to import. Check console for details.`);

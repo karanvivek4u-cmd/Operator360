@@ -9,21 +9,18 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { CheckCircle2, XCircle, FileWarning } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
+import { apiFetch } from "@/lib/operator360/api";
 
 export function InsuranceQueue({ status, title, showActions }: { status: "PENDING" | "APPROVED" | "REJECTED"; title: string; showActions?: boolean }) {
   const { data } = useSuspenseQuery(insuranceQueueQuery(status));
   const qc = useQueryClient();
   const mut = useMutation({
     mutationFn: async ({ id, decision }: { id: string; decision: "APPROVED" | "REJECTED" }) => {
-      const patch: {
-        insurance_status: "APPROVED" | "REJECTED";
-        insurance_approved_at: string;
-        overall_status?: "REJECTED";
-        closed_at?: string;
-      } = { insurance_status: decision, insurance_approved_at: new Date().toISOString() };
-      if (decision === "REJECTED") { patch.overall_status = "REJECTED"; patch.closed_at = new Date().toISOString(); }
-      const { error } = await supabase.from("service_requests").update(patch).eq("request_id", id);
-      if (error) throw error;
+      const endpoint = decision === "APPROVED" 
+        ? `/api/service-requests/${id}/approve-insurance`
+        : `/api/service-requests/${id}/reject-insurance`;
+      const res = await apiFetch(endpoint, { method: "POST" });
+      if (!res.success) throw new Error(res.error || "Update failed");
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["insurance"] });

@@ -1,0 +1,4 @@
+company_name,customer_code,contact_person,email,phone,address,city,state,pincode,gst_number,category,status
+Acme Corp,AC-001,John Doe,vidyotma.ruby@gmail.com,9876543210,123 Main St,Mumbai,Maharashtra,400001,27AADCB2230M1Z2,GOLD,ACTIVE
+Global Infra,GI-002,Jane Smith,sanjaykumarsinhaskv@gamil.com,9876543211,456 Park Ave,Delhi,Delhi,110001,07AADCB2230M1Z2,SILVER,ACTIVE
+Zenith Builders,ZB-003,Rahul Verma,piyushkarn69@gmail.com,9876543212,789 Industrial Estate,Bangalore,Karnataka,560001,29AADCB2230M1Z2,PLATINUM,ACTIVE
