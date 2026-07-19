@@ -1,0 +1,35 @@
+# Node modules (both frontend and backend)
+node_modules/
+**/node_modules/
+
+# Environment files (secrets)
+.env
+**/.env
+.env.local
+**/.env.local
+
+# Build outputs
+.output/
+dist/
+build/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+*.swp
+
+# Temp/debug scripts in frontend root
+loveablefrontend/check-*.cjs
+loveablefrontend/test-*.cjs
+loveablefrontend/test-*.mjs
+loveablefrontend/test-*.ts
+loveablefrontend/scratch*.cjs
+loveablefrontend/debug-*.cjs
+loveablefrontend/scratch.js
