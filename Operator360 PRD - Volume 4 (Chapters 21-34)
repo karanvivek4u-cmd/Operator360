@@ -1,0 +1,411 @@
+Operator360 Frontend Master PRD — Volume 4 (Addendum)
+
+Instruction for Lovable / AI Developer:
+This is Volume 4 of the Frontend Product Requirements Document. It contains critical additions to the core specifications, including user journey mapping, route structures, component standards, and an updated design system. Crucially, note the updated color theme requirements in Chapter 34.
+
+Chapter 21: Complete User Journey Flows
+
+Lovable must understand not only individual pages but also how users naturally navigate through the application. Ensure navigation paths between these steps are intuitive and frictionless.
+
+21.1 Admin Journey
+
+Login
+
+Dashboard
+
+Navigate to Customers (/admin/customers)
+
+Open Customer 360 Workspace
+
+Switch to Machines Tab
+
+Select a Specific Machine
+
+View Machine Digital Twin
+
+View Currently Assigned Operators
+
+Click Operator to open Operator Profile
+
+View Assignment History
+
+Return to Customer Workspace
+
+Alternative Admin Journey (Approvals):
+
+Dashboard
+
+Navigate to Service Requests (/admin/service-requests)
+
+Filter by 'Pending Admin Approval'
+
+Open Request
+
+Review Insurance Approval status and remarks
+
+Approve Request
+
+Receive Success Toast
+
+Request Status automatically updates in the UI
+
+21.2 Customer Journey
+
+Login
+
+Dashboard
+
+Navigate to My Machines (/customer/machines)
+
+Select a Machine
+
+View Machine Details
+
+View Current Operators
+
+Click "Request Operator Replacement"
+
+Select Old Operator (from currently assigned)
+
+Select New Operator (from available pool)
+
+Submit Request
+
+Track Request Timeline
+
+21.3 Insurance Journey
+
+Login
+
+Dashboard
+
+Navigate to Pending Requests (/insurance/pending)
+
+Open a Request
+
+Review Replacement Details
+
+Approve or Reject (with remarks)
+
+Receive Status Update
+
+Automatically load next Pending Request
+
+21.4 Operator Journey
+
+Login
+
+Dashboard (Mobile-first view)
+
+View Assigned Machine details
+
+View Active Benefits
+
+Check Notifications
+
+Update Profile
+
+Chapter 22: Complete Route Structure
+
+The frontend must strictly follow this route hierarchy to maintain role separation and predictable navigation.
+
+22.1 Authentication
+
+/login
+
+/forgot-password
+
+22.2 Admin Routes
+
+/admin/dashboard
+
+/admin/customers
+
+/admin/customers/:customerId
+
+/admin/machines
+
+/admin/machines/:machineId
+
+/admin/operators
+
+/admin/operators/:operatorId
+
+/admin/assignments
+
+/admin/service-requests
+
+/admin/benefits
+
+/admin/notifications
+
+/admin/profile
+
+/admin/settings
+
+22.3 Customer Routes
+
+/customer/dashboard
+
+/customer/machines
+
+/customer/machines/:machineId
+
+/customer/operators
+
+/customer/operators/:operatorId
+
+/customer/assignments
+
+/customer/service-requests
+
+/customer/loyalty
+
+/customer/profile
+
+22.4 Insurance Routes
+
+/insurance/dashboard
+
+/insurance/pending
+
+/insurance/approved
+
+/insurance/rejected
+
+/insurance/profile
+
+22.5 Operator Routes
+
+/operator/dashboard
+
+/operator/benefits
+
+/operator/notifications
+
+/operator/profile
+
+Chapter 23: Standard Components
+
+The application MUST be built using reusable, composable React components. Never duplicate code for similar UI elements.
+
+Core Component Library Requirements:
+
+Cards: Customer Card, Machine Card, Operator Card, Statistics KPI Card, AI Insight Card, Assignment Card.
+
+Panels: Customer Summary Panel, Machine Summary Panel, Glass Panel, Information Panel, AI Assistant Panel.
+
+Lists/Tables: Table Toolbar, Pagination Component, Timeline.
+
+Feedback: Status Badge, Notification Card, Loading Skeleton, Empty State, Error State, Toast.
+
+Layout: Profile Header, Section Header, Breadcrumb, Page Header, Notification Drawer, Action Menu, Quick Action Widget, Chart Container, Recent Activity Widget.
+
+Inputs: Search Bar, Filter Bar, Confirmation Dialog.
+
+Chapter 24: Standard Table Behaviour
+
+Every data table in the application must exhibit identical behavior and styling:
+
+UI: Sticky table header, consistent spacing, row hover effect (bg-muted/50).
+
+Interactions: Search input, sortable columns, pagination controls, filtering options.
+
+Data Handling: Responsive horizontal scrolling (overflow-x-auto), loading skeleton while fetching, meaningful empty state if no records, error state if fetch fails.
+
+Actions: Action menu (ellipses ... or dedicated buttons) per row, consistent status badges.
+
+Rule: Large datasets must never load entirely at once. Pagination or infinite scroll is required.
+
+Chapter 25: Standard Form Behaviour
+
+Forms must be robust and user-friendly:
+
+Required fields must be clearly indicated (e.g., with an asterisk *).
+
+Save/Submit buttons MUST remain disabled until frontend validation passes.
+
+Display inline validation error messages immediately below the respective input.
+
+Buttons must show a loading state (spinner/text change) while the backend request is processing to prevent duplicate submissions.
+
+Display a success or error toast upon completion.
+
+Warn users (unsaved changes dialog) if they attempt to navigate away from a dirty form.
+
+Use confirmation dialogs before major destructive or state-changing updates.
+
+Chapter 26: Notification Behaviour
+
+The notification system should feel real-time and engaging:
+
+Unread indicator (red dot on the bell icon).
+
+Real-time updates (Supabase Realtime subscriptions preferred).
+
+Strictly role-specific (a user only sees notifications linked to their user_id).
+
+Visual distinction between Read and Unread states.
+
+"Mark All as Read" action.
+
+Deep linking: Clicking a notification MUST navigate the user directly to the relevant entity (e.g., clicking a request notification goes to /admin/service-requests).
+
+Group notifications by date (e.g., "Today", "Yesterday").
+
+Show recent notifications first.
+
+Chapter 27: Profile Module
+
+Every role requires a Profile page containing the following sections, tailored to their role context:
+
+Personal Information (Name, Phone, etc.)
+
+Account Information (Email, Role)
+
+Role-specific details (e.g., Operator Code for operators)
+
+Recent Login timestamp
+
+Change Password form
+
+Profile Picture Placeholder (Avatar)
+
+Notification Preferences (UI only for MVP)
+
+Session Information
+
+Logout Action
+
+Chapter 28: Settings Module
+
+Access: Admin ONLY.
+Sections (Some act as UI placeholders for future expansion):
+
+General Settings
+
+Notification Preferences
+
+Security
+
+User Preferences
+
+Future AI Configuration (Placeholder - do not implement backend logic)
+
+Future Integrations (Placeholder - do not implement backend logic)
+
+Chapter 29: Confirmation Dialog Standards
+
+Every critical action MUST require user confirmation via a modal dialog.
+
+Triggers: Deactivate Customer, Approve Request, Reject Request, Logout.
+
+Anatomy of Dialog:
+
+Action Title (e.g., "Approve Request?")
+
+Short Description/Warning
+
+Primary Action Button (e.g., "Yes, Approve")
+
+Cancel Button
+
+Must support a Loading State on the primary button.
+
+Must trigger Success/Failure Toasts upon completion.
+
+Chapter 30: Loading States
+
+Never show blank screens while waiting for Supabase data.
+
+Dashboards: Use Skeleton KPI cards, Skeleton charts, and Skeleton timelines.
+
+Tables: Use Skeleton rows (e.g., render 5 fake rows with shimmering bars).
+
+Profiles: Skeleton avatars and information cards.
+
+Modals: Use a loading overlay or spinner inside the primary button during submission.
+
+Chapter 31: Empty States
+
+When a database query returns no results, display a beautiful, meaningful empty state.
+
+Contexts: No Customers Found, No Machines Found, No Operators Found, No Benefits Available, No Notifications, No Service Requests.
+
+Anatomy:
+
+Clean Illustration or Icon (e.g., lucide-react icons).
+
+Friendly, clear message.
+
+Short explanation of why it's empty.
+
+Primary call-to-action button (e.g., "Add your first machine") if applicable to the user's role.
+
+Chapter 32: Error Handling
+
+Handle every error gracefully without crashing the React app.
+
+Scenarios: Unauthorized Access, Session Expired, Network Failure, Server Error, Data Fetch Failure, RLS Permission Denied.
+
+Implementation: Use generic error boundaries for crashes, and Toast notifications for API failures.
+
+Show informative, user-friendly messages (not raw SQL errors).
+
+Always provide a "Retry" button or clear path forward.
+
+Chapter 33: Analytics Pages (Future Ready)
+
+Reserve navigation space and basic page structures for future analytics modules.
+
+Pages: Customer Analytics, Machine Analytics, Operator Analytics, Benefits Analytics, Service Request Analytics.
+
+Implementation for MVP: These pages should render successfully but contain placeholder charts (e.g., static Recharts components) and a "Coming Soon" or "Draft" badge.
+
+Chapter 34: UI Theme & Design System Overrides
+
+CRITICAL OVERRIDE: This chapter supersedes the color guidelines mentioned in earlier volumes.
+
+While the application maintains an Enterprise SaaS, glassmorphic aesthetic, the color palette must be heavily inspired by heavy machinery and cranes.
+
+34.1 Brand Colors (Crane-Inspired)
+
+Primary Brand Color: A distinct, bold Teal/Cyan (#00A3A1 or similar, akin to heavy equipment manufacturing branding). This should be used for primary buttons, active states, and prominent brand accents.
+
+Secondary/Accent: Maintain high contrast. Dark greys (#1F2937) or deep industrial blues for typography and secondary elements.
+
+Backgrounds: Clean, industrial off-white/light grey (#F8F9FB) to allow the Teal to pop.
+
+Constraints: Do NOT introduce random additional colors (like bright reds, purples, or oranges) outside of standard semantic statuses (Green=Success, Red=Error, Yellow=Warning). The theme should feel like premium, specialized heavy-equipment software.
+
+Note: Do not explicitly use any real-world company names or logos in the UI text; keep the branding generic to the platform ("Operator360").
+
+Chapter 35: Final Frontend Rules Reminder
+
+The generated frontend must strictly adhere to these final commandments:
+
+Do not invent new workflows.
+
+Do not invent additional user roles.
+
+Do not create new database tables or rename columns.
+
+Do not simplify the approval workflow (it must always be Customer -> Insurance -> Admin).
+
+Do not bypass role-based permissions or expose cross-tenant data.
+
+Do not allow Operators to access Customer or Admin pages.
+
+Do not allow Insurance users to modify customer data.
+
+Do not hardcode business logic that should rely on the database state.
+
+Always follow the existing PostgreSQL schema exactly.
+
+Always respect Row Level Security (assume it is active).
+
+Always build reusable components.
+
+Always keep layouts responsive (Mobile-first for operators, Desktop-first for admins).
+
+Always prioritize usability over unnecessary visual complexity.
