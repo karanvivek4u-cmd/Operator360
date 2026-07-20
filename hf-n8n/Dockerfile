@@ -8,9 +8,12 @@ RUN mkdir -p /home/node/.n8n && chown -R node:node /home/node
 # Switch back to the n8n user
 USER node
 
-# Hugging Face Spaces route all traffic to port 7860
-ENV N8N_PORT=7860
+# Use the standard n8n port
+ENV N8N_PORT=5678
 ENV N8N_LISTEN_ADDRESS=0.0.0.0
+
+# Expose the port so Render knows where to route traffic
+EXPOSE 5678
 
 # Optional: Set this to your HF Space URL later to fix webhook URLs
 # ENV WEBHOOK_URL=https://your-space-name.hf.space
