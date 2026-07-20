@@ -234,7 +234,7 @@ class EmailTemplateService {
           ])}
           ${this.paragraph('For security, please log in and change your password right away.', { margin: '18px 0 0 0' })}
           <div style="margin-top: 22px;">
-            ${this.button('Log in to Portal', data.login_url, BRAND.blue, BRAND.blueDark)}
+            ${this.button('Log in to Portal', data.login_url || process.env.ALLOWED_ORIGIN || 'https://operator-360-phi.vercel.app', BRAND.blue, BRAND.blueDark)}
           </div>
         `;
         break;
@@ -250,7 +250,7 @@ class EmailTemplateService {
             ['Temporary Password', `<code style="background:${BRAND.slate100}; padding:2px 7px; border-radius:5px; font-family:'Courier New', monospace;">${data.temporaryPassword}</code>`]
           ])}
           <div style="margin-top: 22px;">
-            ${this.button('Log in to Portal', data.login_url, BRAND.blue, BRAND.blueDark)}
+            ${this.button('Log in to Portal', data.login_url || process.env.ALLOWED_ORIGIN || 'https://operator-360-phi.vercel.app', BRAND.blue, BRAND.blueDark)}
           </div>
         `;
         break;
@@ -346,7 +346,7 @@ class EmailTemplateService {
           ${this.paragraph(`You've been assigned to machine <strong style="color:${BRAND.slate900};">${data.machine}</strong>.`)}
           ${this.paragraph(`This relates to service request <strong style="color:${BRAND.slate900};">${data.request_number}</strong>.`)}
           <div style="margin-top: 22px;">
-            ${this.button('Log in to Portal', data.login_url || 'http://localhost:8080', BRAND.blue, BRAND.blueDark)}
+            ${this.button('Log in to Portal', data.login_url || process.env.ALLOWED_ORIGIN || 'https://operator-360-phi.vercel.app', BRAND.blue, BRAND.blueDark)}
           </div>
         `;
         break;

@@ -5,7 +5,7 @@ const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
 const PORT = Number(process.env.PORT || 4000);
-const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || "http://localhost:8080";
+const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || "https://operator-360-phi.vercel.app";
 
 // Middleware
 app.use(cors({ origin: ALLOWED_ORIGIN }));

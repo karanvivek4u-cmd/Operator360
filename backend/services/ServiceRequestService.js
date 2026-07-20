@@ -64,7 +64,7 @@ class ServiceRequestService {
         old_operator: details.old_operator ? `${details.old_operator.first_name} ${details.old_operator.last_name || ""}` : "None",
         new_operator: details.new_operator ? `${details.new_operator.first_name} ${details.new_operator.last_name || ""}` : "None",
         comments: details.customer_comments || "No comments provided",
-        login_url: process.env.ALLOWED_ORIGIN || "http://localhost:8080",
+        login_url: process.env.ALLOWED_ORIGIN || "https://operator-360-phi.vercel.app",
         approve_url: `http://localhost:4000/api/approvals/approve?token=${approveToken}`,
         reject_url: `http://localhost:4000/api/approvals/reject?token=${rejectToken}`
       });
@@ -113,7 +113,7 @@ class ServiceRequestService {
         old_operator: details.old_operator ? `${details.old_operator.first_name} ${details.old_operator.last_name || ""}` : "None",
         new_operator: details.new_operator ? `${details.new_operator.first_name} ${details.new_operator.last_name || ""}` : "None",
         comments: details.customer_comments || "No comments provided",
-        login_url: process.env.ALLOWED_ORIGIN || "http://localhost:8080",
+        login_url: process.env.ALLOWED_ORIGIN || "https://operator-360-phi.vercel.app",
         approve_url: `http://localhost:4000/api/approvals/approve?token=${approveToken}`,
         reject_url: `http://localhost:4000/api/approvals/reject?token=${rejectToken}`
       });
