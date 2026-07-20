@@ -15,5 +15,4 @@ ENV N8N_LISTEN_ADDRESS=0.0.0.0
 # Optional: Set this to your HF Space URL later to fix webhook URLs
 # ENV WEBHOOK_URL=https://your-space-name.hf.space
 
-# Start n8n
-CMD ["n8n", "start"]
+
