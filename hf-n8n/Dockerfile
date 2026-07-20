@@ -12,6 +12,10 @@ USER node
 ENV N8N_PORT=5678
 ENV N8N_LISTEN_ADDRESS=0.0.0.0
 
+# Memory management for Render Free Tier (512MB limit)
+# Forces Node.js to garbage collect before hitting the container limit
+ENV NODE_OPTIONS="--max-old-space-size=400"
+
 # Expose the port so Render knows where to route traffic
 EXPOSE 5678
 
