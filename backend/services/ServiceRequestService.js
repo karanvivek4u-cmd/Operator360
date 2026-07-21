@@ -65,8 +65,8 @@ class ServiceRequestService {
         new_operator: details.new_operator ? `${details.new_operator.first_name} ${details.new_operator.last_name || ""}` : "None",
         comments: details.customer_comments || "No comments provided",
         login_url: process.env.ALLOWED_ORIGIN || "https://operator-360-phi.vercel.app",
-        approve_url: `http://localhost:4000/api/approvals/approve?token=${approveToken}`,
-        reject_url: `http://localhost:4000/api/approvals/reject?token=${rejectToken}`
+        approve_url: `${process.env.API_BASE_URL || 'http://localhost:4000'}/api/approvals/approve?token=${approveToken}`,
+        reject_url: `${process.env.API_BASE_URL || 'http://localhost:4000'}/api/approvals/reject?token=${rejectToken}`
       });
       if (!success) console.error("[ServiceRequestService] Failed to send service_request_created notification.");
     }
@@ -75,6 +75,11 @@ class ServiceRequestService {
   }
 
   static async approveInsurance(id, actorUserId) {
+    const current = await this._getRequestDetails(id);
+    if (current.insurance_status === "APPROVED") {
+      return current; // Already approved, skip processing
+    }
+
     const { data: request, error } = await supabaseAdmin
       .from("service_requests")
       .update({ insurance_status: "APPROVED" })
@@ -114,8 +119,8 @@ class ServiceRequestService {
         new_operator: details.new_operator ? `${details.new_operator.first_name} ${details.new_operator.last_name || ""}` : "None",
         comments: details.customer_comments || "No comments provided",
         login_url: process.env.ALLOWED_ORIGIN || "https://operator-360-phi.vercel.app",
-        approve_url: `http://localhost:4000/api/approvals/approve?token=${approveToken}`,
-        reject_url: `http://localhost:4000/api/approvals/reject?token=${rejectToken}`
+        approve_url: `${process.env.API_BASE_URL || 'http://localhost:4000'}/api/approvals/approve?token=${approveToken}`,
+        reject_url: `${process.env.API_BASE_URL || 'http://localhost:4000'}/api/approvals/reject?token=${rejectToken}`
       });
       if (!success) console.error("[ServiceRequestService] Failed to send insurance_approved_admin_action notification.");
     }
@@ -124,6 +129,11 @@ class ServiceRequestService {
   }
 
   static async rejectInsurance(id, actorUserId) {
+    const current = await this._getRequestDetails(id);
+    if (current.insurance_status === "REJECTED") {
+      return current; // Already rejected
+    }
+
     const { data: request, error } = await supabaseAdmin
       .from("service_requests")
       .update({ insurance_status: "REJECTED", overall_status: "REJECTED" }) // Auto reject overall
@@ -149,6 +159,11 @@ class ServiceRequestService {
   }
 
   static async approveAdmin(id, actorUserId) {
+    const current = await this._getRequestDetails(id);
+    if (current.admin_status === "APPROVED") {
+      return current; // Already approved
+    }
+
     const { data: request, error } = await supabaseAdmin
       .from("service_requests")
       .update({ admin_status: "APPROVED", overall_status: "APPROVED" }) // Mark as fully approved
@@ -208,6 +223,11 @@ class ServiceRequestService {
   }
 
   static async rejectAdmin(id, actorUserId) {
+    const current = await this._getRequestDetails(id);
+    if (current.admin_status === "REJECTED") {
+      return current; // Already rejected
+    }
+
     const { data: request, error } = await supabaseAdmin
       .from("service_requests")
       .update({ admin_status: "REJECTED", overall_status: "REJECTED" })
@@ -233,6 +253,11 @@ class ServiceRequestService {
   }
 
   static async complete(id, actorUserId) {
+    const current = await this._getRequestDetails(id);
+    if (current.overall_status === "APPROVED") {
+      return current; // Already completed/approved
+    }
+
     const { data: request, error } = await supabaseAdmin
       .from("service_requests")
       .update({ overall_status: "APPROVED" }) // Use APPROVED as there is no COMPLETED enum value
